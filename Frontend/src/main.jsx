@@ -10,6 +10,11 @@ import Messages from './components/Mesages.jsx';
 import MainPage from './pages/MainPage.jsx';
 import { useAuth } from './utils/authContext.jsx'; 
 import AuthProvider from './utils/authContext.jsx';
+import Blinks from './components/Blinks.jsx';
+import Create from './components/Create.jsx';
+import Notifications from './components/Notifications.jsx';
+import Profile from './components/Profile.jsx';
+import Search from './components/Search.jsx';
 
 const AppRoutes = () => {
   const { isLoggedIn } = useAuth(); 
@@ -29,6 +34,26 @@ const AppRoutes = () => {
             {
               path: 'messages',
               element: <Messages />,
+            },
+            {
+              path: 'create',
+              element: <Create />,
+            },
+            {
+              path: 'blinks',
+              element: <Blinks />,
+            },
+            {
+              path: 'notifications',
+              element: <Notifications />,
+            },
+            {
+              path: 'profile',
+              element: <Profile />,
+            },
+            {
+              path: 'search',
+              element: <Search />,
             },
           ],
         },

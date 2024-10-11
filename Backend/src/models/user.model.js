@@ -8,7 +8,6 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowercase: true,
             trim: true, 
             index: true
         },
@@ -19,33 +18,36 @@ const userSchema = new Schema(
             lowecase: true,
             trim: true, 
         },
-        fullName: {
+        fullname: {
             type: String,
             required: true,
             trim: true, 
             index: true
         },
         avatar: {
-            type: String, // cloudinary url
-            required: true,
+            type: String,
         },
-        coverImage: {
-            type: String, // cloudinary url
-        },
-        watchHistory: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Video"
-            }
-        ],
         password: {
             type: String,
             required: [true, 'Password is required']
         },
+        isPrivate:{
+            type:Boolean,
+            required:true,
+            default:true
+        },
+        pendingRequests:[
+            {
+                type:Schema.Types.ObjectId,
+                ref:"User"
+            },
+            {
+                timestamps:true
+            }
+        ],
         refreshToken: {
             type: String
         }
-
     },
     {
         timestamps: true

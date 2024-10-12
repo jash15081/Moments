@@ -1,47 +1,93 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import axiosInstance from "../utils/axiosConfig";
+import { HashLoader } from "react-spinners";
+import debounce from 'lodash/debounce';
+import { useNavigate } from "react-router-dom";
 
 function Search() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [str, setStr] = useState("");
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const fetchUser = useCallback(
+    debounce(async (searchStr) => {
+      if (searchStr.trim() === "") {
+        setUsers([]);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const fetchedUsers = await axiosInstance.post("/users/search", { str: searchStr });
+        setIsLoading(false);
+        setUsers(fetchedUsers.data.data);
+      } catch (e) {
+        setIsLoading(false);
+        setError(e.response?.data?.message);
+      }
+    }, 400),
+    []
+  );
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchUser(str);
+    return () => {
+      fetchUser.cancel();
+    };
+  }, [str, fetchUser]);
+
+  const handleChange = (e) => {
+    setStr(e.target.value);
+  };
+
+  const userClick = (username)=>{
+    navigate(`/userProfile/${username}`);
+  }
+
   return (
     <div className="flex flex-col h-screen p-4 bg-gray-50">
       <div className="mb-4">
         <input
           type="text"
           placeholder="Search..."
-          className="w-full h-12 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full h-10 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
+          onChange={handleChange}
+          value={str}
         />
       </div>
-
-      {/* Placeholder for search results */}
+      <div className="line w-full h-1 bg-gray-400 rounded-lg mb-1"></div>
       <div className="flex-1 overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-2">Search Results:</h2>
-        <div className="bg-white shadow-md rounded-md p-4">
-          {/* Example search result items */}
-          <div className="flex items-center p-2 hover:bg-gray-100 rounded-md transition-colors duration-200">
-            <img
-              src="media/icons/example_icon.svg"
-              alt="Result Icon"
-              className="h-6 mr-2"
-            />
-            <span>Example Result 1</span>
+        {isLoading ? (
+          <HashLoader className="mx-auto mt-[30%]" color={"#808080"} loading={true} size={30} />
+        ) : (
+          <div className="bg-white shadow-md rounded-md p-4 flex flex-col h-full w-full">
+            {users.length > 0 ? (
+              users.map((user) => (
+                <div key={user.id} onClick={()=>{userClick(user.username)}} className="flex items-center p-1 pl-3 bg-gray-100 hover:bg-gray-200 rounded-lg mb-[2px] transition-colors duration-200">
+                   <div className="flex items-center py-1">
+                      <div className="profile_picture h-9 aspect-square rounded-[6rem] p-[1px] bg-gray-50 overflow-hidden">
+                          <button>
+                              <img src={user.avatar} className="h-full aspect-square object-cover rounded-full border-white border-2" alt="Profile" />
+                          </button>
+                      </div>
+                      <div className="title flex flex-col ml-4 items-start">
+                          <p className="text-sm font-medium">{user.fullname}</p>
+                          <p className="text-xs -mt-1 flex items-center justify-center">
+                              {user.username}
+                          </p>
+                      </div>
+                      
+                  </div>
+                  
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-400 m-auto">Search</div>
+            )}
           </div>
-          <div className="flex items-center p-2 hover:bg-gray-100 rounded-md transition-colors duration-200">
-            <img
-              src="media/icons/example_icon.svg"
-              alt="Result Icon"
-              className="h-6 mr-2"
-            />
-            <span>Example Result 2</span>
-          </div>
-          <div className="flex items-center p-2 hover:bg-gray-100 rounded-md transition-colors duration-200">
-            <img
-              src="media/icons/example_icon.svg"
-              alt="Result Icon"
-              className="h-6 mr-2"
-            />
-            <span>Example Result 3</span>
-          </div>
-          {/* Add more results as needed */}
-        </div>
+        )}
       </div>
     </div>
   );

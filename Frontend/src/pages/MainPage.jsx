@@ -7,7 +7,7 @@ function MainPage() {
         <div className="logo h-1/5 overflow-hidden flex justify-center items-center -ml-6 mr-3">
           <img
             className="h-[40vh] mix-blend-multiply"
-            src="media/pictures/logo_white.png"
+            src="/media/pictures/logo_white.png"
             alt="Logo"
           />
         </div>
@@ -17,7 +17,7 @@ function MainPage() {
           className="navigations_home sidebutton flex items-center"
           activeClassName="active-link"
         >
-          <img src="media/icons/home.svg" className="h-6 mr-3" alt="Home" />
+          <img src="/media/icons/home.svg" className="h-6 mr-3" alt="Home" />
           Home
         </NavLink>
 
@@ -26,7 +26,7 @@ function MainPage() {
           className="navigations_search sidebutton flex items-center"
           activeClassName="active-link"
         >
-          <img src="media/icons/search.svg" className="h-6 mr-3" alt="Search" />
+          <img src="/media/icons/search.svg" className="h-6 mr-3" alt="Search" />
           Search
         </NavLink>
 
@@ -35,7 +35,7 @@ function MainPage() {
           className="navigations_blinks sidebutton flex items-center"
           activeClassName="active-link"
         >
-          <img src="media/icons/blink.svg" className="h-6 mr-3" alt="Blinks" />
+          <img src="/media/icons/blink.svg" className="h-6 mr-3" alt="Blinks" />
           Blinks
         </NavLink>
 
@@ -45,7 +45,7 @@ function MainPage() {
           activeClassName="active-link"
         >
           <img
-            src="media/icons/message.svg"
+            src="/media/icons/message.svg"
             className="h-6 mr-3"
             alt="Messages"
           />
@@ -58,7 +58,7 @@ function MainPage() {
           activeClassName="active-link"
         >
           <img
-            src="media/icons/notification.svg"
+            src="/media/icons/notification.svg"
             className="h-6 mr-3"
             alt="Notifications"
           />
@@ -70,7 +70,7 @@ function MainPage() {
           className="navigations_create sidebutton flex items-center"
           activeClassName="active-link"
         >
-          <img src="media/icons/create.svg" className="h-6 mr-3" alt="Create" />
+          <img src="/media/icons/create.svg" className="h-6 mr-3" alt="Create" />
           Create
         </NavLink>
 
@@ -80,7 +80,7 @@ function MainPage() {
           activeClassName="active-link"
         >
           <img
-            src="media/icons/profile.svg"
+            src="/media/icons/profile.svg"
             className="h-6 mr-3"
             alt="Profile"
           />
@@ -93,7 +93,7 @@ function MainPage() {
           activeClassName="active-link"
         >
           <img
-            src="media/icons/hamburger.svg"
+            src="/media/icons/hamburger.svg"
             className="h-6 mr-3"
             alt="More"
           />
@@ -105,50 +105,79 @@ function MainPage() {
         <div className="topbar mb-auto flex items-center p-1 mt-1 sm:hidden">
           <button className="p-1 mr-auto ml-2 hover:bg-gray-200 rounded-md">
             <img
-              src="media/icons/hamburger.svg"
+              src="/media/icons/hamburger.svg"
               className="h-5"
               alt="Hamburger"
             />
           </button>
           <img
-            src="media/pictures/name_white.png"
+            src="/media/pictures/name_white.png"
             className="h-6 object-cover m-auto"
             alt="Name"
           />
-          <button className="p-1 mr-0 hover:bg-gray-200 rounded-md">
+          <NavLink
+            to="/notifications"
+            className="p-1 mr-0 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
             <img
-              src="media/icons/notification.svg"
+              src="/media/icons/notification.svg"
               className="h-5"
               alt="Notification"
             />
-          </button>
-          <button className="p-1 ml-2 hover:bg-gray-200 rounded-md">
+          </NavLink>
+          <NavLink
+            to="/messages"
+            className="p-1 ml-2 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
             <img
-              src="media/icons/message.svg"
+              src="/media/icons/message.svg"
               className="h-5"
               alt="Messages"
             />
-          </button>
+          </NavLink>
         </div>
-
-        <Outlet />
+          
+          <Outlet />
+        
 
         <div className="navbar flex mt-auto justify-evenly items-center p-1 bg-gray-50 border border-t-4 sm:hidden">
-          <button className="p-2 hover:bg-gray-200 rounded-md">
-            <img src="media/icons/home.svg" className="h-5" alt="Home" />
-          </button>
-          <button className="p-2 hover:bg-gray-200 rounded-md">
-            <img src="media/icons/search.svg" className="h-5" alt="Search" />
-          </button>
-          <button className="p-1 hover:bg-gray-200 rounded-md">
-            <img src="media/icons/create.svg" className="h-7" alt="Create" />
-          </button>
-          <button className="p-2 hover:bg-gray-200 rounded-md">
-            <img src="media/icons/blink.svg" className="h-5" alt="Blinks" />
-          </button>
-          <button className="p-2 hover:bg-gray-200 rounded-md">
-            <img src="media/icons/profile.svg" className="h-5" alt="Profile" />
-          </button>
+          <NavLink
+            to="/"
+            className="p-2 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
+            <img src="/media/icons/home.svg" className="h-5" alt="Home" />
+          </NavLink>
+          <NavLink
+            to="/search"
+            className="p-2 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
+            <img src="/media/icons/search.svg" className="h-5" alt="Search" />
+          </NavLink>
+          <NavLink
+            to="/create"
+            className="p-1 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
+            <img src="/media/icons/create.svg" className="h-7" alt="Create" />
+          </NavLink>
+          <NavLink
+            to="/blinks"
+            className="p-2 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
+            <img src="/media/icons/blink.svg" className="h-5" alt="Blinks" />
+          </NavLink>
+          <NavLink
+            to="/profile"
+            className="p-2 hover:bg-gray-200 rounded-md"
+            activeClassName="active-link"
+          >
+            <img src="/media/icons/profile.svg" className="h-5" alt="Profile" />
+          </NavLink>
         </div>
       </div>
 

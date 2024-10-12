@@ -5,7 +5,9 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
-
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
@@ -181,14 +183,31 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 const searchUsers = asyncHandler(async (req,res)=>{
+    console.log("reqcomes")
     const {str} = req.body;
+    if(!str){
+        return res.status(201).json(new ApiResponse(201,[],"user fetched !"));
+    }
     const users = await User.find({
         $or:[{username: { $regex: str, $options: 'i' }},{fullname: { $regex: str, $options: 'i' }}]
-    });
-    res.status(200).json(users);
+    }).select("username fullname avatar");
+    if(!users){
+        throw new ApiError(500,"Something went wrong while fetching the users !");
+    }
+    return res.status(201).json(new ApiResponse(201,users,"user fetched !"));
 })
-
-
+const getUser = asyncHandler(async(req,res)=>{
+    const {username} = req.params;
+    if(!username){
+        throw new ApiError(400,"username required to get User !!");
+    }
+    const user = await User.findOne({username}).select("-refreshToken -password");
+    if(!user){
+        throw new ApiError(401,"User not found !!");
+    }
+    console.log(user.username)
+    res.status(200).json(new ApiResponse(200,user,"User Found!"));
+})
 
 
 
@@ -212,8 +231,6 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
-
-
 const getCurrentUser = asyncHandler(async(req, res) => {
     return res
     .status(200)
@@ -223,7 +240,6 @@ const getCurrentUser = asyncHandler(async(req, res) => {
         "User fetched successfully"
     ))
 })
-
 const updateAccountDetails = asyncHandler(async(req, res) => {
     const {fullName, email} = req.body
 
@@ -247,7 +263,6 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Account details updated successfully"))
 });
-
 const updateUserAvatar = asyncHandler(async(req, res) => {
     const avatarLocalPath = req.file?.path
 
@@ -280,7 +295,6 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         new ApiResponse(200, user, "Avatar image updated successfully")
     )
 })
-
 const updateUserCoverImage = asyncHandler(async(req, res) => {
     const coverImageLocalPath = req.file?.path
 
@@ -314,8 +328,6 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
         new ApiResponse(200, user, "Cover image updated successfully")
     )
 })
-
-
 const getUserChannelProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
 
@@ -387,7 +399,6 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
         new ApiResponse(200, channel[0], "User channel fetched successfully")
     )
 })
-
 const getWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
         {
@@ -456,5 +467,6 @@ export {
     getUserChannelProfile,
     getWatchHistory,
     checkAuth,
-    searchUsers
+    searchUsers,
+    getUser
 }

@@ -15,6 +15,7 @@ import Create from './components/Create.jsx';
 import Notifications from './components/Notifications.jsx';
 import Profile from './components/Profile.jsx';
 import Search from './components/Search.jsx';
+import UserProfile from './components/UserProfile.jsx';
 
 const AppRoutes = () => {
   const { isLoggedIn } = useAuth(); 
@@ -55,6 +56,10 @@ const AppRoutes = () => {
               path: 'search',
               element: <Search />,
             },
+            {
+              path:'userProfile/:username',
+              element:<UserProfile/>
+            }
           ],
         },
         {

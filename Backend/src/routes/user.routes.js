@@ -13,7 +13,11 @@ import {
     updateAccountDetails,
     checkAuth,
     searchUsers,
-    getUser
+    getUser,
+    sendRequest,
+    acceptRequest,
+    deleteRequest,
+    unfollow
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -26,6 +30,11 @@ router.route("/login").post(loginUser)
 router.route("/checkAuth").post(verifyJWT,checkAuth)
 router.route("/search").post(verifyJWT,searchUsers)
 router.route("/getUser/:username").get(verifyJWT,getUser)
+router.route("/sendRequest").post(verifyJWT,sendRequest)
+router.route("/unfollow").post(verifyJWT,unfollow)
+router.route("/cancelRequest").post(verifyJWT,deleteRequest)
+router.route("/acceptRequest").post(verifyJWT,acceptRequest)
+
 //secured routes
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)

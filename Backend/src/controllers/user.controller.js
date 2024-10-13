@@ -5,9 +5,16 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
+import { Follows } from "../models/follows.model.js";
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+const  getCount = async (userId)=>{
+    const followers = await Follows.countDocuments({followedTo:userId});
+    const followings = await Follows.countDocuments({followedBy:userId});
+    return {followers,followings};
+}
+
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
@@ -205,11 +212,133 @@ const getUser = asyncHandler(async(req,res)=>{
     if(!user){
         throw new ApiError(401,"User not found !!");
     }
-    console.log(user.username)
-    res.status(200).json(new ApiResponse(200,user,"User Found!"));
+
+    let pending = false;
+    let following =false;
+
+    const isFollowing = await Follows.exists({followedBy:req.user._id,followedTo:user._id});
+    const isPending = await User.findOne({_id:user._id,pendingRequests:req.user._id});
+
+    if(isPending){
+        pending = true
+    }
+    if(isFollowing){
+        following = true
+    }
+    const {followers,followings} = await getCount(user._id);
+    console.log("user sent !")
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"User Found!"));
 })
+const sendRequest = asyncHandler(async(req,res)=>{
+    const {userId} = req.body;
+    if(!userId){
+        throw new ApiError(400,"User Id Required !");
+    }
+    let user = await User.findById(userId).select("-refreshToken -password");
+    const currentId = req.user._id;
+    if(!user.isPrivate){
+        const follow = await Follows.create({
+            followedTo:userId,
+            followedBy:currentId
+        })
+        if(!follow){
+            throw new ApiError(501,"Something went wrong while Updating the followes !");
+        }
+    }
+    else{
+        user = await User.findByIdAndUpdate(userId,{$addToSet:{pendingRequests:currentId}},{new:true}).select("-refreshToken -password");
+    }
+    if(!user){
+        throw new ApiError(501,"Something went wrong while Updating the User !");
+    }
+    
 
+    let pending = false;
+    let following =false;
 
+    const isFollowing = await Follows.findOne({followedBy:req.user._id,followedTo:user._id});
+    const isPending = await User.findOne({_id:user._id,pendingRequests:req.user._id});
+    if(isPending){
+        pending = true
+    }
+    if(isFollowing){
+        following = true
+    }
+    const {followers,followings} = await getCount(user._id);
+
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"added the request."));
+})
+const deleteRequest = asyncHandler(async(req,res)=>{
+    const {userId} = req.body;
+    if(!userId){
+        throw new ApiError(400,"User Id Required !");
+    }
+    const currentId = req.user._id;
+    const user = await User.findByIdAndUpdate(userId,{$pull:{pendingRequests:currentId}}).select("-refreshToken -password");
+    if(!user){
+        throw new ApiError(501,"Something went wrong while Updating the User !");
+    }
+    let pending = false;
+    let following =false;
+
+    const isFollowing = await Follows.exists({followedBy:req.user._id,followedTo:user._id});
+    const isPending = await User.findOne({_id:user._id,pendingRequests:req.user._id});
+
+    if(isPending){
+        pending = true
+    }
+    if(isFollowing){
+        following = true
+    }
+    console.log("request deleted !");
+    const {followers,followings} = await getCount(user._id);
+
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"pulled the request."));
+})
+const acceptRequest = asyncHandler(async(req,res)=>{
+    const {userId} = req.body;
+    if(!userId){
+        throw new ApiError(400,"User Id Required !");
+    }
+    const currentId = req.user._id;
+    const user = await User.findByIdAndUpdate(currentId,{$pull:{pendingRequests:userId}}).select("-refreshToken -password");
+    const follow = await Follows.create({
+        followedTo:currentId,
+        followedBy:userId
+    })
+    if(!follow){
+        throw new ApiError(501,"Something went wrong while Updating the followes !");
+    }
+    
+    res.status(200).json(new ApiResponse(200,user,"accepted the request."));
+})
+const unfollow = asyncHandler(async(req,res)=>{
+    const {userId} = req.body;
+    if(!userId){
+        throw new ApiError(400,"User Id Required !");
+    }
+    const currentId = req.user._id;
+    const follow = await Follows.deleteOne({followedBy:currentId,followedTo:userId});
+    const user = await User.findById(userId);
+    if(!user){
+        throw new ApiError(501,"Something went wrong while Updating the User !");
+    }
+    let pending = false;
+    let following =false;
+
+    const isFollowing = await Follows.exists({followedBy:req.user._id,followedTo:user._id});
+    const isPending = await User.findOne({_id:user._id,pendingRequests:req.user._id});
+
+    if(isPending){
+        pending = true
+    }
+    if(isFollowing){
+        following = true
+    }
+    const {followers,followings} = await getCount(userId);
+    console.log("unfollowed !");
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"unfollowed !."));
+})
 
 
 const changeCurrentPassword = asyncHandler(async(req, res) => {
@@ -468,5 +597,9 @@ export {
     getWatchHistory,
     checkAuth,
     searchUsers,
-    getUser
+    getUser,
+    sendRequest,
+    deleteRequest,
+    unfollow,
+    acceptRequest
 }

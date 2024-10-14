@@ -17,7 +17,8 @@ import {
     sendRequest,
     acceptRequest,
     deleteRequest,
-    unfollow
+    unfollow,
+    getPendingRequests
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -34,7 +35,7 @@ router.route("/sendRequest").post(verifyJWT,sendRequest)
 router.route("/unfollow").post(verifyJWT,unfollow)
 router.route("/cancelRequest").post(verifyJWT,deleteRequest)
 router.route("/acceptRequest").post(verifyJWT,acceptRequest)
-
+router.route("/getPendingRequests").get(verifyJWT,getPendingRequests);
 //secured routes
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)

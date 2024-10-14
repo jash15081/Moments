@@ -296,20 +296,36 @@ const deleteRequest = asyncHandler(async(req,res)=>{
     res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"pulled the request."));
 })
 const acceptRequest = asyncHandler(async(req,res)=>{
+    console.log("accepting")
     const {userId} = req.body;
+    console.log(req.body)
+
     if(!userId){
         throw new ApiError(400,"User Id Required !");
     }
+    console.log("hello")
+
     const currentId = req.user._id;
+    console.log("hello")
+
     const user = await User.findByIdAndUpdate(currentId,{$pull:{pendingRequests:userId}}).select("-refreshToken -password");
+    console.log("hello")
+    if(!user){
+        throw new ApiError(401,"Something went wrong while updating user")
+    }
+    console.log("hello")
+
     const follow = await Follows.create({
         followedTo:currentId,
         followedBy:userId
     })
+    console.log("accepting ?")
+
     if(!follow){
         throw new ApiError(501,"Something went wrong while Updating the followes !");
     }
-    
+    console.log("hello")
+
     res.status(200).json(new ApiResponse(200,user,"accepted the request."));
 })
 const unfollow = asyncHandler(async(req,res)=>{
@@ -338,6 +354,15 @@ const unfollow = asyncHandler(async(req,res)=>{
     const {followers,followings} = await getCount(userId);
     console.log("unfollowed !");
     res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"unfollowed !."));
+})
+const getPendingRequests = asyncHandler(async(req,res)=>{
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate('pendingRequests')
+    if(!user){
+        throw new ApiError(401,"User not exist!");
+    }
+    const pendingRequests = user.pendingRequests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.status(200).json(new ApiResponse(200,pendingRequests,"requests fetched !!"));
 })
 
 
@@ -601,5 +626,6 @@ export {
     sendRequest,
     deleteRequest,
     unfollow,
-    acceptRequest
+    acceptRequest,
+    getPendingRequests
 }

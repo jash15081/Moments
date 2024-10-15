@@ -72,7 +72,7 @@ function UserProfile(){
         <>
         {isLoading?<HashLoader className="mx-auto mt-[30%]" color={"#808080"} loading={true} size={30} />:(
         <>
-        <div className="profile w-full overflow-hidden">
+        <div className="profile w-full overflow-scroll">
             <div className="header bg-gray-100 p-2 flex items-center w-full h-[25%] justify-evenly sm:pt-10">
                 <div className="self-story  ml-[-5%] p-[4px] flex-shrink-0 mx-2 h-[80%]  rounded-[80%] bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 aspect-square m-0 overflow-hidden sm:h-[100%]">
                     <button>
@@ -118,11 +118,12 @@ function UserProfile(){
                     <button className="px-4 py-2 bg-blue-400 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{follow(user.user._id)}}>follow</button>)}
                 </div>
             </div>
-            <div className="mutuals">
-
+            <div className="mutuals name_and_follow flex bg-gray-100  pl-14 pt-2 text-gray-600 text-sm pb-4">
+                <p className="text-gray-900 font-semibold mr-2">Bio :</p>
+                <div className="bio">{user.user.bio}</div>
             </div>
             
-            <Posts username={username} />
+            <Posts userId={user.user._id} />
 
         </div>
         </>

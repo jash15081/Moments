@@ -8,7 +8,7 @@ import './index.css';
 function App() {
 
   return (
-    <div className=' flex  h-screen w-screen font-serif'>
+    <div className=' flex  h-screen w-screen font-noto-sans'>
       <Outlet/>
     </div>
   )

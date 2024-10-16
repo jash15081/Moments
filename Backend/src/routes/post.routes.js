@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { 
     createPost,
-    getPostbyUser,
+    getPostByUser,
 
  } from "../controllers/post.controller.js";
  import { upload } from "../middlewares/multer.middleware.js";
@@ -10,6 +10,6 @@ import {
  const router = Router()
 
  router.route("/create").post(verifyJWT,upload.single('media'),createPost)
- router.route("/getPostsByUser").post(verifyJWT,getPostbyUser);
+ router.route("/getPostsByUser").post(verifyJWT,getPostByUser);
 
  export default router

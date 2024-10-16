@@ -1,4 +1,4 @@
-import {NavLink, useParams} from "react-router-dom";
+import {NavLink, useNavigate, useParams} from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
 import { useState,useEffect } from "react";
 import Posts from "./Posts.jsx";
@@ -10,6 +10,7 @@ function UserProfile(){
     const [isLoading,setIsLoading] = useState(true);
     const [followLoading,setfollowLoading] = useState(false);
     const [error,setError] = useState("");
+    const navigate = useNavigate()
     const fetchUser = async ()=>{
         setIsLoading(true);
         try{
@@ -67,7 +68,12 @@ function UserProfile(){
         }
     }
 
-
+    const seeFollowers = async ()=>{
+        navigate(`/followers/${user.user._id}`);
+    }
+    const seeFollowings = async ()=>{
+        navigate(`/followings/${user.user._id}`);
+    }
     return (
         <>
         {isLoading?<HashLoader className="mx-auto mt-[30%]" color={"#808080"} loading={true} size={30} />:(
@@ -91,13 +97,13 @@ function UserProfile(){
                     </div>
                 </NavLink>
 
-                <NavLink className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
+                <NavLink onClick={user.following||(user.user.isPrivate == false)?seeFollowers:null} className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
                     <div className="fllowers flex flex-col items-center justify-center">
                         <div className="text-xs sm:text-base">followers</div>
                         <div className="text-lg font-medium">{user.followers}</div>
                     </div>
                 </NavLink>
-                <NavLink className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
+                <NavLink onClick={user.following||(user.user.isPrivate == false)?seeFollowings:null} className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
                     <div className="following flex flex-col items-center justify-center">
                         <div className="text-xs sm:text-base">followings</div>
                         <div className="text-lg font-medium">{user.followings}</div>
@@ -119,12 +125,12 @@ function UserProfile(){
                 </div>
             </div>
             <div className="mutuals name_and_follow flex bg-gray-100  pl-14 pt-2 text-gray-600 text-sm pb-4">
-                <p className="text-gray-900 font-semibold mr-2">Bio :</p>
+                {user.user.bio == ""?<p className="text-gray-900 font-semibold mr-2">Bio :</p>:<></>}
                 <div className="bio">{user.user.bio}</div>
             </div>
+            {user.following||(user.user.isPrivate == false)?<Posts userId={user.user._id} />:
+            <><div className="flex items-center justify-center h-[60%] text-gray-500">User is Private</div></>}   
             
-            <Posts userId={user.user._id} />
-
         </div>
         </>
 

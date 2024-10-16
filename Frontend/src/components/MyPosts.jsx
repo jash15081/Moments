@@ -1,28 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
-import Post from './Post';
+import MyPost from './MyPost';
 
-const Posts = ({ userId }) => {
+const MyPosts = ({ userId }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUserPosts = async () => {
       try {
+        console.log(userId)
         const response = await axiosInstance.post('/post/getPostsByUser', { userId });
-        console.log(response.data.data.posts);
         setPosts(response.data.data.posts);
+        console.log(response)
       } catch (error) {
-        console.log(error)
         setError('Failed to fetch posts');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
-  }, []);
+    fetchUserPosts();
+  }, [userId]);
+
+  const handleDelete = (postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -32,10 +36,12 @@ const Posts = ({ userId }) => {
       {posts.length === 0 ? (
         <p className="text-gray-500 text-center mt-4">No posts</p>
       ) : (
-        posts.map((post) => <Post key={post.id} post={post} />)
+        posts.map((post) => (
+          <MyPost key={post.id} post={post} onDelete={handleDelete} />
+        ))
       )}
     </div>
   );
 };
 
-export default Posts;
+export default MyPosts;

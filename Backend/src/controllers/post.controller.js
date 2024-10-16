@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-
+import mongoose from "mongoose";
 const createPost = asyncHandler(async(req,res)=>{
     const file = req.file?.path;
     const userId = req.user._id
@@ -32,14 +32,21 @@ const createPost = asyncHandler(async(req,res)=>{
     }
     res.status(200).json(new ApiResponse(200,"Post Created SuccessFully !!"));
 })
-const getPostbyUser = asyncHandler(async(req,res)=>{
+
+const getPostByUser = asyncHandler(async (req, res) => {
     const userId = req.body.userId;
     const currentUserId = req.user._id;
-    if(!userId){
-        throw new ApiError(400,"user Id required !");
+
+    if (!userId) {
+        throw new ApiError(400, "Invalid user ID provided.");
     }
-    console.log(userId + "post fetching !")
+    console.log(await Post.findOne({createdBy:userId}))
+    console.log(await Post.aggregate([{$match:{createdBy:new mongoose.Types.ObjectId(userId)}}]))
+
     const posts = await Post.aggregate([
+        {
+            $match:{createdBy: new mongoose.Types.ObjectId(userId) }, 
+        },
         {
             $lookup: {
                 from: 'comments',
@@ -86,6 +93,9 @@ const getPostbyUser = asyncHandler(async(req,res)=>{
             },
         },
         {
+            $unwind: '$creator',
+        },
+        {
             $addFields: {
                 commentsCount: { $size: '$comments' },
                 likesCount: { $size: '$likes' },
@@ -101,15 +111,17 @@ const getPostbyUser = asyncHandler(async(req,res)=>{
             },
         },
     ]);
-    
-    if(!posts){
-        throw new ApiError(500,"something went wrong while Feching the posts !")
+
+    if (!posts || posts.length === 0) {
+        return res.status(404).json(new ApiResponse(404, null, "No posts found for the user."));
     }
-    res.status(200).json(new ApiResponse(200,{posts},"Post fetched SuccessFully"))
-})
+
+    res.status(200).json(new ApiResponse(200, { posts }, "Posts fetched successfully"));
+});
+
 
 
 export {
     createPost,
-    getPostbyUser
+    getPostByUser
 }

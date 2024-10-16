@@ -15,7 +15,10 @@ import {
     acceptRequest,
     deleteRequest,
     unfollow,
-    getPendingRequests
+    getPendingRequests,
+    getFollowers,
+    getFollowings,
+    removeFollower
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -37,8 +40,9 @@ router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)
 router.route("/change-password").post(verifyJWT, changeCurrentPassword)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
-router.route("/update-account").patch(verifyJWT, updateAccountDetails)
-router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar)
-
-
+router.route("/update-account").post(verifyJWT, updateAccountDetails)
+router.route("/avatar").post(verifyJWT, upload.single("avatar"), updateUserAvatar)
+router.route("/getFollowers/:userId").get(verifyJWT,getFollowers);
+router.route("/getFollowings/:userId").get(verifyJWT,getFollowings);
+router.route("/removeFollower").post(verifyJWT,removeFollower)
 export default router

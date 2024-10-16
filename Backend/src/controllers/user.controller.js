@@ -329,13 +329,16 @@ const acceptRequest = asyncHandler(async(req,res)=>{
     res.status(200).json(new ApiResponse(200,user,"accepted the request."));
 })
 const unfollow = asyncHandler(async(req,res)=>{
+    console.log("unfollowing !")
     const {userId} = req.body;
+    console.log(userId)
     if(!userId){
         throw new ApiError(400,"User Id Required !");
     }
     const currentId = req.user._id;
     const follow = await Follows.deleteOne({followedBy:currentId,followedTo:userId});
     const user = await User.findById(userId);
+    console.log("here ?");
     if(!user){
         throw new ApiError(501,"Something went wrong while Updating the User !");
     }
@@ -364,7 +367,32 @@ const getPendingRequests = asyncHandler(async(req,res)=>{
     const pendingRequests = user.pendingRequests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.status(200).json(new ApiResponse(200,pendingRequests,"requests fetched !!"));
 })
-
+const getFollowers = asyncHandler(async(req,res)=>{
+    const {userId} = req.params;
+    if(!userId){
+        throw new ApiError(400,"User Id is required !!");
+    }
+    const fetchedFollowers = await Follows.find({followedTo:userId}).populate("followedBy","username avatar fullname _id")
+    const followers = fetchedFollowers.map((follow)=>(follow = follow.followedBy))
+    res.status(200).json(new ApiResponse(200,followers,"Followers fetched successfully !"));
+})
+const getFollowings = asyncHandler(async(req,res)=>{
+    const {userId} = req.params;
+    if(!userId){
+        throw new ApiError(400,"User Id is required !!");
+    }
+    const fetchedFollowers = await Follows.find({followedBy:userId}).populate("followedTo","username avatar fullname _id")
+    const followers = fetchedFollowers.map((follow)=>(follow = follow.followedTo))
+    res.status(200).json(new ApiResponse(200,followers,"Followers fetched successfully !"));
+})
+const removeFollower = asyncHandler( async(req,res)=>{
+    const {userId} = req.body;
+    if(!userId){
+        throw new ApiError(400,"User Id required !");
+    }
+    await Follows.deleteOne({followedBy:userId,followedTo:req.user._id});
+    res.status(200).json(new ApiResponse(200,"Follower removed !"));
+})
 
 const changeCurrentPassword = asyncHandler(async(req, res) => {
     const {oldPassword, newPassword} = req.body
@@ -386,37 +414,53 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 const getCurrentUser = asyncHandler(async(req, res) => {
+    const {followers,followings} = await getCount(req.user._id);
+    const user = req.user;
     return res
     .status(200)
     .json(new ApiResponse(
         200,
-        req.user,
+        {user,followers,followings},
         "User fetched successfully"
     ))
 })
-const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {fullName, email} = req.body
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { fullname, email, bio, isPrivate, username } = req.body;
+    
+    const emailExists = await User.findOne({ email, _id: { $ne: req.user._id } });
+    if (emailExists) {
+        return res
+            .status(400)
+            .json(new ApiResponse(400, null, "Email is already taken"));
+    }
 
-    if (!fullName || !email) {
-        throw new ApiError(400, "All fields are required")
+    const usernameExists = await User.findOne({ username, _id: { $ne: req.user._id } });
+    if (usernameExists) {
+        return res
+            .status(400)
+            .json(new ApiResponse(400, null, "Username is already taken"));
     }
 
     const user = await User.findByIdAndUpdate(
-        req.user?._id,
+        req.user._id,
         {
             $set: {
-                fullName,
-                email: email
+                username,
+                fullname,
+                email,
+                isPrivate,
+                bio:bio || ""
             }
         },
-        {new: true}
-        
-    ).select("-password")
+        { new: true }
+    ).select("-password");
 
+    console.log("User updated!");
     return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Account details updated successfully"))
+        .status(200)
+        .json(new ApiResponse(200, user, "Account details updated successfully"));
 });
+
 const updateUserAvatar = asyncHandler(async(req, res) => {
     const avatarLocalPath = req.file?.path
 
@@ -424,7 +468,6 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Avatar file is missing")
     }
 
-    //TODO: delete old image - assignment
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
 
@@ -466,5 +509,8 @@ export {
     deleteRequest,
     unfollow,
     acceptRequest,
-    getPendingRequests
+    getPendingRequests,
+    getFollowers,
+    getFollowings,
+    removeFollower
 }

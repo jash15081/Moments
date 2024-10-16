@@ -16,7 +16,10 @@ import Notifications from './components/Notifications.jsx';
 import Profile from './components/Profile.jsx';
 import Search from './components/Search.jsx';
 import UserProfile from './components/UserProfile.jsx';
-
+import Followers from './components/Followers.jsx';
+import Followings from './components/Followings.jsx';
+import EditFollowings from './components/EditFollowings.jsx';
+import EditFollowers from './components/EditFollowers.jsx';
 const AppRoutes = () => {
   const { isLoggedIn } = useAuth(); 
   const router = createBrowserRouter([
@@ -59,7 +62,23 @@ const AppRoutes = () => {
             {
               path:'userProfile/:username',
               element:<UserProfile/>
-            }
+            },
+            {
+              path:'followers/:userId',
+              element:<Followers/>
+            },
+            {
+              path:'followings/:userId',
+              element:<Followings/>
+            },
+            {
+              path:'editFollowings/:userId',
+              element:<EditFollowings/>
+            },
+            {
+              path:'editFollowers/:userId',
+              element:<EditFollowers/>
+            },
           ],
         },
         {

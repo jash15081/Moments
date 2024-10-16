@@ -14,14 +14,14 @@ const Post = ({ post }) => {
         <div className="profile_picture h-12 aspect-square rounded-[6rem] p-[2px] bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 overflow-hidden ">
           <button>
             <img
-              src={post.creator[0].avatar}
+              src={post.creator.avatar}
               className="h-full aspect-square object-cover rounded-full border-white border-2"
               alt=""
             />
           </button>
         </div>
         <div className="title flex flex-col ml-4 items-start">
-          <p className="text-lg" onClick={()=>{navigateUser(post.creator[0].username)}}>{post.creator[0].username}</p>
+          <p className="text-lg" onClick={()=>{navigateUser(post.creator.username)}}>{post.creator.username}</p>
           <p className="text-sm -mt-1 flex items-center justify-center">
             <img src="media/icons/music.svg" className="h-3 mr-1 mt-1" alt="" />- {post.audioName}
           </p>
@@ -34,12 +34,12 @@ const Post = ({ post }) => {
       </div>
       <div className="media w-full h-auto  rounded-lg shadow-lg">
         {post.mediaType === 'video' ? (
-          <video controls className="w-full max-h-96 mx-auto">
+          <video controls className="w-full  mx-auto">
             <source src={post.media} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : (
-          <img src={post.media} className="mx-auto max-h-96" alt="Post media" />
+          <img src={post.media} className="w-full" alt="Post media" />
         )}
       </div>
       <div className="interction flex py-4">

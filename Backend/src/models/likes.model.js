@@ -8,13 +8,10 @@ const likesSchema = new Schema({
     },
     content:{
         type:Schema.Types.ObjectId,
+        ref:"Post",
         required:true
     },
-    contentType: {
-        type: String,
-        enum: ['story', 'post', 'comment'],
-        required: true,
-    },
+    
 },
 {
     timestamps:true

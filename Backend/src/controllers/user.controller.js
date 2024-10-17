@@ -6,13 +6,15 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import { Follows } from "../models/follows.model.js";
+import { Post } from "../models/post.model.js";
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 const  getCount = async (userId)=>{
     const followers = await Follows.countDocuments({followedTo:userId});
     const followings = await Follows.countDocuments({followedBy:userId});
-    return {followers,followings};
+    const posts = await Post.countDocuments({createdBy:userId})
+    return {followers,followings,posts};
 }
 
 
@@ -225,9 +227,9 @@ const getUser = asyncHandler(async(req,res)=>{
     if(isFollowing){
         following = true
     }
-    const {followers,followings} = await getCount(user._id);
+    const {followers,followings,posts} = await getCount(user._id);
     console.log("user sent !")
-    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"User Found!"));
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings,posts},"User Found!"));
 })
 const sendRequest = asyncHandler(async(req,res)=>{
     const {userId} = req.body;
@@ -264,9 +266,9 @@ const sendRequest = asyncHandler(async(req,res)=>{
     if(isFollowing){
         following = true
     }
-    const {followers,followings} = await getCount(user._id);
+    const {followers,followings,posts} = await getCount(user._id);
 
-    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"added the request."));
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings,posts},"added the request."));
 })
 const deleteRequest = asyncHandler(async(req,res)=>{
     const {userId} = req.body;
@@ -291,9 +293,9 @@ const deleteRequest = asyncHandler(async(req,res)=>{
         following = true
     }
     console.log("request deleted !");
-    const {followers,followings} = await getCount(user._id);
+    const {followers,followings,posts} = await getCount(user._id);
 
-    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"pulled the request."));
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings,posts},"pulled the request."));
 })
 const acceptRequest = asyncHandler(async(req,res)=>{
     console.log("accepting")
@@ -354,9 +356,9 @@ const unfollow = asyncHandler(async(req,res)=>{
     if(isFollowing){
         following = true
     }
-    const {followers,followings} = await getCount(userId);
+    const {followers,followings,posts} = await getCount(userId);
     console.log("unfollowed !");
-    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings},"unfollowed !."));
+    res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings,posts},"unfollowed !."));
 })
 const getPendingRequests = asyncHandler(async(req,res)=>{
     const userId = req.user._id;

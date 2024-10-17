@@ -92,7 +92,7 @@ function UserProfile(){
                 <NavLink className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
                     <div className="postcount flex flex-col items-center justify-center">
                         <div className="text-xs sm:text-base">posts</div>
-                        <div className="text-lg font-medium">0</div>
+                        <div className="text-lg font-medium">{user.posts}</div>
                         
                     </div>
                 </NavLink>

@@ -37,7 +37,7 @@ const MyPosts = ({ userId }) => {
         <p className="text-gray-500 text-center mt-4">No posts</p>
       ) : (
         posts.map((post) => (
-          <MyPost key={post.id} post={post} onDelete={handleDelete} />
+          <MyPost key={post.id} post={post} onDelete={handleDelete} setPosts={setPosts} />
         ))
       )}
     </div>

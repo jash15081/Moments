@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
+import { Likes } from "../models/likes.model.js";
+import { Comment } from "../models/comments.model.js";
 const createPost = asyncHandler(async(req,res)=>{
     const file = req.file?.path;
     const userId = req.user._id
@@ -40,8 +42,6 @@ const getPostByUser = asyncHandler(async (req, res) => {
     if (!userId) {
         throw new ApiError(400, "Invalid user ID provided.");
     }
-    console.log(await Post.findOne({createdBy:userId}))
-    console.log(await Post.aggregate([{$match:{createdBy:new mongoose.Types.ObjectId(userId)}}]))
 
     const posts = await Post.aggregate([
         {
@@ -65,7 +65,7 @@ const getPostByUser = asyncHandler(async (req, res) => {
                             $expr: {
                                 $and: [
                                     { $eq: ['$content', '$$postId'] },
-                                    { $eq: ['$contentType', 'post'] }, // Filter for 'post' content type only
+                                    true
                                 ],
                             },
                         },
@@ -112,16 +112,132 @@ const getPostByUser = asyncHandler(async (req, res) => {
         },
     ]);
 
-    if (!posts || posts.length === 0) {
-        return res.status(404).json(new ApiResponse(404, null, "No posts found for the user."));
-    }
+
 
     res.status(200).json(new ApiResponse(200, { posts }, "Posts fetched successfully"));
 });
 
+const deletePost = asyncHandler(async(req,res)=>{
+    const {postId} = req.params;
+    if(!postId){
+        throw new ApiError(400,"post Id required !");
+    }
+    await Post.deleteOne({_id:postId});
+    req.body.userId = req.user._id
+    getPostByUser(req,res);
+})
 
+const likePost = asyncHandler(async(req,res)=>{
+    const {postId} = req.body;
+    const userId = req.user._id;
+    if(!postId){
+        throw new ApiError(400,"Post Id required !");
+    }
 
+    const like = await Likes.create({
+        likedBy:userId,
+        content:postId,
+    })
+
+    if(!like){
+        throw new ApiError(500,"something went wrong while creating the like");
+    }
+    res.status(200).json(new ApiResponse(200,"Liked SUccessFully !"));
+})
+
+const dislikePost = asyncHandler(async(req,res)=>{
+    const {postId} = req.body;
+    const userId = req.user._id;
+    if(!postId){
+        throw new ApiError(400,"Post Id required !");
+    }
+
+    const like = await Likes.deleteOne({
+        likedBy:userId,
+        content:postId,
+    })
+    res.status(200).json(new ApiResponse(200,"DisLiked SUccessFully !"));
+})
+
+const getComments = asyncHandler(async(req,res)=>{
+    const {postId} = req.params;
+    const currentUserId = req.user._id;
+    if(!postId){
+        throw new ApiError(400,"postId required !");
+    }
+    const comments = await Comment.aggregate([
+        {
+          $match: { post: new mongoose.Types.ObjectId(postId) }
+        },
+        {
+          $sort: { createdAt: -1 }
+        },
+        {
+          $lookup: {
+            from: 'users', 
+            localField: 'commentedBy',
+            foreignField: '_id',
+            as: 'commentedBy'
+          }
+        },
+        {
+          $unwind: '$commentedBy'
+        },
+        {
+          $addFields: {
+            isDeletable: { $eq: ['$commentedBy._id',new mongoose.Types.ObjectId(currentUserId)] }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            post: 1,
+            content: 1,
+            createdAt: 1,
+            'commentedBy.username': 1,
+            'commentedBy.avatar': 1,
+            isDeletable: 1
+          }
+        }
+      ]);
+      
+    console.log(comments);
+    res.status(200).json(new ApiResponse(200,comments,"comments fetched SuccessFully !"));
+
+})
+
+const addComment = asyncHandler(async(req,res)=>{
+    const {postId,content} = req.body;
+    const userId = req.user._id;
+    if(!postId || !content){
+        throw new ApiError(400,"content and PostId is required !");
+    }
+    const comment = Comment.create({
+        content,
+        post:postId,
+        commentedBy:userId,
+    })
+    if(!comment){
+        throw new ApiError(500,"Something went wrong while creating the comment")
+    }
+    res.status(200).json(200,comment,"comment fetched SuccessFully !");
+})
+
+const deleteComment = asyncHandler(async(req,res)=>{
+    const {commentId} = req.body;
+    if(!commentId){
+        throw new ApiError(400,"comment id required !");
+    }
+    await Comment.deleteOne({_id:commentId});
+    res.status(200).json(200,"Comment deleted SuccessFully");
+})
 export {
     createPost,
-    getPostByUser
+    getPostByUser,
+    deletePost,
+    likePost,
+    dislikePost,
+    getComments,
+    addComment,
+    deleteComment
 }

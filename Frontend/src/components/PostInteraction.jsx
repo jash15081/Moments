@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { HashLoader } from 'react-spinners';
-import { formatDistanceToNow } from 'date-fns'; // Import the date-fns function
+import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const DedicatedPost = ({ post, onClose, toggleLike, likesCount, isLiked }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const fetchComments = async () => {
     setLoading(true);
@@ -58,26 +60,30 @@ const DedicatedPost = ({ post, onClose, toggleLike, likesCount, isLiked }) => {
     }
   };
 
+  const handleUsernameClick = (username) => {
+    navigate(`/userProfile/${username}`);
+  };
+
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center">
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
 
       <div className="bg-white rounded-lg shadow-lg w-4/5 h-4/5 flex z-40 overflow-hidden">
-        <div className="w-2/3 h-full p-6 flex flex-col items-center justify-center">
+        <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center">
           {post.mediaType === 'video' ? (
-            <video controls className="w-3/4 h-auto mb-4">
+            <video controls className="w-full h-auto mb-4">
               <source src={post.media} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           ) : (
-            <img src={post.media} className="w-3/4 h-auto mb-4" alt="Post media" />
+            <img src={post.media} className="w-full h-auto mb-4" alt="Post media" />
           )}
           <p className="text-gray-600 text-center mt-2">{post.caption}</p>
         </div>
 
         <div className="w-px h-full bg-gray-300"></div>
 
-        <div className="w-1/3 h-full p-6 flex flex-col justify-between">
+        <div className="w-1/2 h-full p-6 flex flex-col justify-between"> 
           <div className="flex items-center justify-between mb-4">
             <div className="likes flex flex-col items-center">
               <button onClick={toggleLike}>
@@ -109,7 +115,7 @@ const DedicatedPost = ({ post, onClose, toggleLike, likesCount, isLiked }) => {
                     className="h-10 w-10 rounded-full mr-3"
                   />
                   <div className="flex-1">
-                    <p className="text-gray-600 text-sm font-semibold">
+                    <p className="text-gray-600 text-sm font-semibold cursor-pointer" onClick={() => handleUsernameClick(cmt.commentedBy.username)}> {/* Added click handler */}
                       {cmt.commentedBy.username}{' '}
                       <span className="text-gray-400 text-xs">
                         • {formatDistanceToNow(new Date(cmt.createdAt))}

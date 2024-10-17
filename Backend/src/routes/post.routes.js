@@ -7,7 +7,8 @@ import {
     dislikePost,
     getComments,
     addComment,
-    deleteComment
+    deleteComment,
+    getPostForHome
 
  } from "../controllers/post.controller.js";
  import { upload } from "../middlewares/multer.middleware.js";
@@ -23,4 +24,5 @@ import {
  router.route("/getComments/:postId").get(verifyJWT,getComments)
  router.route("/addcomment").post(verifyJWT,addComment)
  router.route("/deleteComment").post(verifyJWT,deleteComment)
+ router.route("/getPostsForHome").get(verifyJWT,getPostForHome);
  export default router

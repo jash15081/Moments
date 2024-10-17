@@ -6,6 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 import { Likes } from "../models/likes.model.js";
 import { Comment } from "../models/comments.model.js";
+import { Follows } from "../models/follows.model.js";
 const createPost = asyncHandler(async(req,res)=>{
     const file = req.file?.path;
     const userId = req.user._id
@@ -231,6 +232,102 @@ const deleteComment = asyncHandler(async(req,res)=>{
     await Comment.deleteOne({_id:commentId});
     res.status(200).json(200,"Comment deleted SuccessFully");
 })
+
+const getPostForHome = asyncHandler(async(req,res)=>{
+    const userId = req.user._id;
+   // Step 1: Get the list of followed user IDs
+    const followedUsers = await Follows.find({ followedBy: userId }).select('followedTo');
+    const followedUserIds = followedUsers.map(follow => follow.followedTo);
+
+    // Step 2: Define the aggregation pipeline
+    const pipeline = [
+        {
+            // Step 1: Match posts created by followed users or public accounts
+            $match: {
+                $or: [
+                    { createdBy: { $in: followedUserIds } }, // Posts from followed users
+                    { isPrivate: false } // Posts from public accounts
+                ]
+            }
+        },
+        {
+            // Step 2: Randomly sample posts
+            $sample: { size: 10 } // Get 10 random posts
+        },
+        {
+            // Step 3: Lookup comments for each post
+            $lookup: {
+                from: 'comments',
+                localField: '_id',
+                foreignField: 'post',
+                as: 'comments',
+            },
+        },
+        {
+            // Step 4: Lookup likes for each post
+            $lookup: {
+                from: 'likes',
+                let: { postId: '$_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ['$content', '$$postId'],
+                            },
+                        },
+                    },
+                ],
+                as: 'likes',
+            },
+        },
+        {
+            // Step 5: Lookup the creator (user) information for each post
+            $lookup: {
+                from: 'users',
+                localField: 'createdBy',
+                foreignField: '_id',
+                pipeline: [
+                    {
+                        $project: {
+                            avatar: 1,
+                            username: 1,
+                            _id: 1,
+                            fullname: 1,
+                        },
+                    },
+                ],
+                as: 'creator',
+            },
+        },
+        {
+            // Step 6: Unwind the creator array to a single object
+            $unwind: '$creator',
+        },
+        {
+            // Step 7: Add additional fields like commentsCount, likesCount, and isLikedByCurrentUser
+            $addFields: {
+                commentsCount: { $size: '$comments' },
+                likesCount: { $size: '$likes' },
+                isLikedByCurrentUser: {
+                    $in: [userId, '$likes.likedBy'],
+                },
+            },
+        },
+        {
+            // Step 8: Project to exclude the likes and comments arrays
+            $project: {
+                likes: 0,
+                comments: 0,
+            },
+        },
+    ];
+
+    const posts = await Post.aggregate(pipeline).exec();
+
+
+    res.status(200).json(new ApiResponse(200,posts,"post fetched sucsessfully"));
+
+})
 export {
     createPost,
     getPostByUser,
@@ -239,5 +336,6 @@ export {
     dislikePost,
     getComments,
     addComment,
-    deleteComment
+    deleteComment,
+    getPostForHome
 }

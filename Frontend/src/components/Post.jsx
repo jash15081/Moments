@@ -7,9 +7,11 @@ const Post = ({ post }) => {
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser);
   const [likesCount, setLikesCount] = useState(post.likesCount);
-  const [showDedicatedPost, setShowDedicatedPost] = useState(false); // State to control DedicatedPost visibility
+  const [showDedicatedPost, setShowDedicatedPost] = useState(false);
 
-  const navigateUser = (username) => {
+  // Navigate to the user's profile
+  const navigateUser = (username, event) => {
+    event.stopPropagation(); // Prevent triggering other click handlers
     navigate(`/userProfile/${username}`);
   };
 
@@ -29,11 +31,11 @@ const Post = ({ post }) => {
   };
 
   const handlePostClick = () => {
-    setShowDedicatedPost(true); // Show the DedicatedPost when the post is clicked
+    setShowDedicatedPost(true);
   };
 
   const closeDedicatedPost = () => {
-    setShowDedicatedPost(false); // Hide the DedicatedPost when closing it
+    setShowDedicatedPost(false);
   };
 
   return (
@@ -41,7 +43,9 @@ const Post = ({ post }) => {
       <div className="post flex flex-col w-full flex-shrink-0" onClick={handlePostClick}>
         <div className="top_bar flex items-center py-2">
           <div className="profile_picture h-12 aspect-square rounded-[6rem] p-[2px] bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 overflow-hidden">
-            <button onClick={(e) => { e.stopPropagation(); navigateUser(post.creator.username); }}>
+            <button
+              onClick={(e) => navigateUser(post.creator.username, e)}
+            >
               <img
                 src={post.creator.avatar}
                 className="h-full aspect-square object-cover rounded-full border-white border-2"
@@ -50,7 +54,12 @@ const Post = ({ post }) => {
             </button>
           </div>
           <div className="title flex flex-col ml-4 items-start">
-            <p className="text-lg" onClick={(e) => { e.stopPropagation(); navigateUser(post.creator.username); }}>{post.creator.username}</p>
+            <p
+              className="text-lg cursor-pointer"
+              onClick={(e) => navigateUser(post.creator.username, e)}
+            >
+              {post.creator.username}
+            </p>
             <p className="text-sm -mt-1 flex items-center justify-center">
               <img src="media/icons/music.svg" className="h-3 mr-1 mt-1" alt="" />- {post.audioName}
             </p>
@@ -102,7 +111,13 @@ const Post = ({ post }) => {
 
       {/* DedicatedPost Popup */}
       {showDedicatedPost && (
-        <DedicatedPost post={post} onClose={closeDedicatedPost} toggleLike={toggleLike} likesCount={likesCount} isLiked={isLiked}  />
+        <DedicatedPost
+          post={post}
+          onClose={closeDedicatedPost}
+          toggleLike={toggleLike}
+          likesCount={likesCount}
+          isLiked={isLiked}
+        />
       )}
     </>
   );

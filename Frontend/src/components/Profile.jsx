@@ -13,7 +13,7 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [followers,setFollowers] = useState(0);
   const [followings,setFollowings] = useState(0);
-
+  const [posts,setPosts] = useState(0);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -23,6 +23,7 @@ function Profile() {
       setUser(fetchedUser.data.data.user); 
       setFollowers(fetchedUser.data.data.followers)
       setFollowings(fetchedUser.data.data.followings)
+      setPosts(fetchedUser.data.data.posts);
       setIsLoading(false);
     } catch (e) {
       setError(e.response?.data?.message || "Failed to fetch user data");
@@ -84,7 +85,7 @@ function Profile() {
         <NavLink className="p-2 hover:bg-gray-200 transition duration-75 rounded-lg">
           <div className="postcount flex flex-col items-center justify-center">
             <div className="text-xs sm:text-base">Posts</div>
-            <div className="text-lg font-medium">{user.postsCount || 0}</div>
+            <div className="text-lg font-medium">{posts || 0}</div>
           </div>
         </NavLink>
 

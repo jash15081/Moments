@@ -416,13 +416,13 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 const getCurrentUser = asyncHandler(async(req, res) => {
-    const {followers,followings} = await getCount(req.user._id);
+    const {followers,followings,posts} = await getCount(req.user._id);
     const user = req.user;
     return res
     .status(200)
     .json(new ApiResponse(
         200,
-        {user,followers,followings},
+        {user,followers,followings,posts},
         "User fetched successfully"
     ))
 })
@@ -494,6 +494,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         new ApiResponse(200, user, "Avatar image updated successfully")
     )
 })
+
 
 export {
     registerUser,

@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import { Follows } from "../models/follows.model.js";
 import { Post } from "../models/post.model.js";
+import { Notification } from "../models/notification.model.js";
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -327,7 +328,12 @@ const acceptRequest = asyncHandler(async(req,res)=>{
         throw new ApiError(501,"Something went wrong while Updating the followes !");
     }
     console.log("hello")
-
+    console.log()
+    await Notification.create({
+        userId:userId,
+        message:`${user.username} just accepted your follow request !!`,
+        avatar:user.avatar
+    })
     res.status(200).json(new ApiResponse(200,user,"accepted the request."));
 })
 const unfollow = asyncHandler(async(req,res)=>{
@@ -494,6 +500,11 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         new ApiResponse(200, user, "Avatar image updated successfully")
     )
 })
+const getNotifications = asyncHandler(async(req,res)=>{
+    const userId = req.user._id;
+    const notifications = await Notification.find({userId:userId}).sort("-createdAt");
+    res.status(200).json(new ApiResponse(200,notifications,"notifications fetched successFully"));
+})
 
 
 export {
@@ -515,5 +526,6 @@ export {
     getPendingRequests,
     getFollowers,
     getFollowings,
-    removeFollower
+    removeFollower,
+    getNotifications
 }

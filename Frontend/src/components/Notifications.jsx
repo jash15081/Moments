@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai'; // Icons for dropdown
+import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai'; 
 
 function Notifications() {
     const [followRequests, setFollowRequests] = useState([]);
@@ -18,8 +18,7 @@ function Notifications() {
     };
 
     const fetchOtherNotifications = async () => {
-        // Fetch other notifications from the server
-        const response = await axiosInstance.get("/users/getOtherNotifications"); // Make sure to implement this endpoint
+        const response = await axiosInstance.get("/users/getNotifications"); // Make sure to implement this endpoint
         const notifications = response.data.data;
         setOtherNotifications(notifications);
     };
@@ -108,10 +107,11 @@ function Notifications() {
                         ) : (
                             otherNotifications.map(notification => (
                                 <div key={notification.id} className="flex items-center mb-4 p-3 border border-gray-300 rounded-lg bg-white">
-                                    <img src={notification.profilePicture} alt="Profile" className="w-12 h-12 rounded-full mr-4" />
+                                    <img src={notification.avatar} alt="Profile" className="w-12 h-12 rounded-full mr-4" />
                                     <div className="flex-1">
                                         <p className="font-medium">{notification.name}</p>
                                         <p className="text-gray-600 text-sm">{notification.message}</p>
+                                        <p className="text-gray-400 text-xs">{formatDistanceToNow(new Date(notification.createdAt))} ago</p> {/* Added timestamp */}
                                     </div>
                                 </div>
                             ))

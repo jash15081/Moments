@@ -7,6 +7,8 @@ import mongoose from "mongoose";
 import { Likes } from "../models/likes.model.js";
 import { Comment } from "../models/comments.model.js";
 import { Follows } from "../models/follows.model.js";
+import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
 const createPost = asyncHandler(async(req,res)=>{
     const file = req.file?.path;
     const userId = req.user._id
@@ -134,7 +136,8 @@ const likePost = asyncHandler(async(req,res)=>{
     if(!postId){
         throw new ApiError(400,"Post Id required !");
     }
-
+    const post = await Post.findById(postId).populate("createdBy");
+    const currUser = await User.findById(userId);
     const like = await Likes.create({
         likedBy:userId,
         content:postId,
@@ -143,6 +146,11 @@ const likePost = asyncHandler(async(req,res)=>{
     if(!like){
         throw new ApiError(500,"something went wrong while creating the like");
     }
+    await Notification.create({
+        userId:post.createdBy._id,
+        message:`${currUser.username} just liked your post !!`,
+        avatar:currUser.avatar
+    })
     res.status(200).json(new ApiResponse(200,"Liked SUccessFully !"));
 })
 
@@ -218,9 +226,16 @@ const addComment = asyncHandler(async(req,res)=>{
         post:postId,
         commentedBy:userId,
     })
+    const post = await Post.findById(postId).populate("createdBy");
+    const currUser = await User.findById(userId);
     if(!comment){
         throw new ApiError(500,"Something went wrong while creating the comment")
     }
+    await Notification.create({
+        userId:post.createdBy._id,
+        message:`${currUser.username} just commented on your post !!`,
+        avatar:currUser.avatar
+    })
     res.status(200).json(200,comment,"comment fetched SuccessFully !");
 })
 

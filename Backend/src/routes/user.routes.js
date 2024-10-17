@@ -18,7 +18,8 @@ import {
     getPendingRequests,
     getFollowers,
     getFollowings,
-    removeFollower
+    removeFollower,
+    getNotifications
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -45,4 +46,5 @@ router.route("/avatar").post(verifyJWT, upload.single("avatar"), updateUserAvata
 router.route("/getFollowers/:userId").get(verifyJWT,getFollowers);
 router.route("/getFollowings/:userId").get(verifyJWT,getFollowings);
 router.route("/removeFollower").post(verifyJWT,removeFollower)
+router.route("/getNotifications").get(verifyJWT,getNotifications)
 export default router

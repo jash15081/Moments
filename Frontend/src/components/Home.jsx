@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import Post from './Post';
-
+import { HashLoader } from 'react-spinners';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ const Home = () => {
     fetchRandomPosts();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <HashLoader className="mx-auto mt-[30%]" color={"#808080"} loading={true} size={40} />;
   if (error) return <p>{error}</p>;
 
   return (

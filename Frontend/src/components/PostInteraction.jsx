@@ -105,7 +105,7 @@ const DedicatedPost = ({ post, onClose, toggleLike, likesCount, isLiked }) => {
 
           <div className="comments flex-1 overflow-y-auto mb-4">
             {loading ? (
-              <p className="text-center text-gray-500">Loading comments...</p>
+              <p className="text-center text-gray-500"><HashLoader className="mx-auto mt-[30%]" color={"#808080"} loading={true} size={30} /></p>
             ) : comments.length ? (
               comments.map((cmt, index) => (
                 <div key={index} className="comment hover:bg-gray-200 mb-1 p-2 rounded-lg transition duration-75 flex items-start">
@@ -157,7 +157,6 @@ const DedicatedPost = ({ post, onClose, toggleLike, likesCount, isLiked }) => {
 
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <HashLoader color="#ff0000" loading={loading} size={60} />
         </div>
       )}
     </div>

@@ -77,7 +77,7 @@ const Create = () => {
           <HashLoader color={"#808080"} loading={true} size={30} />
         </div>
       )}
-      <div className={`flex bg-gray-100 border border-gray-300 rounded-lg w-full h-[90%]  mx-auto mt-6 shadow-lg transition duration-75 ${isLoading ? 'brightness-90 pointer-events-none' : ''}`}>
+      <div className={`flex bg-gray-100 border border-gray-300 rounded-lg w-full h-[90%] flex-col overflow-y-auto sm:flex-row mx-auto mt-6 shadow-lg transition duration-75 ${isLoading ? 'brightness-90 pointer-events-none' : ''}`}>
         <div className="flex-1 p-5 border-r border-gray-300 flex flex-col items-center justify-center transition duration-75">
           <div className="w-full h-[93%] bg-gray-200 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center mb-5 relative transition duration-75">
             {renderMediaPreview()}

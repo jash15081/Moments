@@ -125,7 +125,7 @@ function Profile() {
       </div>
       <div className="bio_section flex bg-gray-100 pl-14 pt-2 text-gray-600 text-sm pb-4">
         {user.bio ? (
-          <div className="bio">{user.bio}</div>
+          <div className="bio" style={{ whiteSpace: "pre-wrap" }}>{user.bio}</div>
         ) : (
           <p className="text-gray-900 font-semibold mr-2">Bio: <span className="italic">No bio available.</span></p>
         )}

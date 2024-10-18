@@ -1,7 +1,7 @@
 function Messages(){
     return (
         <>
-        <p>Messages</p>
+        <p className="m-auto text-gray-500 text-xl">Coming Soon</p>
         </>
     )
 }

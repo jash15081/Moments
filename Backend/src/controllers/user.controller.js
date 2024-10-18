@@ -368,7 +368,7 @@ const unfollow = asyncHandler(async(req,res)=>{
 })
 const getPendingRequests = asyncHandler(async(req,res)=>{
     const userId = req.user._id;
-    const user = await User.findById(userId).populate('pendingRequests')
+    const user = await User.findById(userId).populate('pendingRequests',"-craetedAt").exec()
     if(!user){
         throw new ApiError(401,"User not exist!");
     }

@@ -1,6 +1,19 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosConfig";
 
 function MainPage() {
+  const navigate = useNavigate();
+  const logout = async()=>{
+    try{
+      const res = axiosInstance.post("/users/logout");
+      navigate("/login");
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+  
   return (
     <div className="container flex">
       <div className="sidebar h-screen ml-2 flex-col justify-start items-center bg-gray-50 shadow-lg hidden sm:flex">
@@ -88,24 +101,24 @@ function MainPage() {
         </NavLink>
 
         <NavLink
-          to="/more"
+          onClick={logout}
           className="navigations_more mt-auto sidebutton flex items-center mb-2"
           activeClassName="active-link"
         >
           <img
-            src="/media/icons/hamburger.svg"
+            src="/media/icons/logout.svg"
             className="h-6 mr-3"
             alt="More"
           />
-          More
+          Logout
         </NavLink>
       </div>
 
       <div className="main_page w-screen h-screen flex flex-col justify-center sm:justify-normal sm:max-w-[60Vw] sm:w-[60vw] overflow-hidden">
         <div className="topbar mb-auto flex items-center p-1 mt-1 sm:hidden">
-          <button className="p-1 mr-auto ml-2 hover:bg-gray-200 rounded-md">
+          <button onClick={logout} className="p-1 mr-auto ml-2 hover:bg-gray-200 rounded-md">
             <img
-              src="/media/icons/hamburger.svg"
+              src="/media/icons/logout.svg"
               className="h-5"
               alt="Hamburger"
             />

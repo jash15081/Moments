@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HashLoader } from 'react-spinners';
+import { formatDistanceToNow } from 'date-fns'; // Import date-fns
 import axiosInstance from '../utils/axiosConfig';
 import DedicatedPost from './PostInteraction'; // Import the DedicatedPost component
 
@@ -49,7 +50,12 @@ const MyPost = ({ post, onDelete, setPosts }) => {
 
   return (
     <>
-      <div className="post flex flex-col w-full flex-shrink-0 relative" onClick={handlePostClick}>
+      <div className="post flex flex-col w-full flex-shrink-0 relative hover:bg-gray-200 transition duration-75 rounded-lg p-3" onClick={handlePostClick}>
+        {/* Display the time ago above the media */}
+        <div className="text-gray-500 text-sm mb-2">
+          {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+        </div>
+
         <div className="media w-full h-auto rounded-lg shadow-lg">
           {post.mediaType === 'video' ? (
             <video controls className="w-full mx-auto">

@@ -14,6 +14,7 @@ function Notifications() {
     const fetchFollowRequests = async () => {
         const response = await axiosInstance.get("/users/getPendingRequests");
         const requests = response.data.data;
+        console.log(response.data)
         setFollowRequests(requests);
     };
 
@@ -41,9 +42,9 @@ function Notifications() {
     };
 
     return (
-        <div className="w-4/5 mx-auto flex flex-col">
+        <div className="w-4/5 mx-auto flex flex-col overflow-y-auto">
             {/* Follow Requests Dropdown */}
-            <div className="mb-4">
+            <div className="mb-4 overflow-y-auto">
                 <h3 
                     className="text-lg font-semibold bg-gray-100 pl-6 pt-4 mt-4 rounded-lg flex justify-between items-center cursor-pointer"
                     onClick={() => setIsFollowRequestsOpen(!isFollowRequestsOpen)}
@@ -101,7 +102,7 @@ function Notifications() {
                     {isOtherNotificationsOpen ? <AiOutlineUp /> : <AiOutlineDown />}
                 </h3>
                 {isOtherNotificationsOpen && (
-                    <div className="bg-gray-100 rounded-lg p-5">
+                    <div className="bg-gray-100 rounded-lg p-5 overflow-y-auto">
                         {otherNotifications.length === 0 ? (
                             <p className="text-gray-600">No notifications.</p>
                         ) : (

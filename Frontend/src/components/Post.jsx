@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns'; // Import date-fns for formatting time
 import axiosInstance from '../utils/axiosConfig';
-import DedicatedPost from './PostInteraction'; 
+import DedicatedPost from './PostInteraction';
 
 const Post = ({ post }) => {
   const navigate = useNavigate();
@@ -9,9 +10,8 @@ const Post = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [showDedicatedPost, setShowDedicatedPost] = useState(false);
 
-  // Navigate to the user's profile
   const navigateUser = (username, event) => {
-    event.stopPropagation(); // Prevent triggering other click handlers
+    event.stopPropagation();
     navigate(`/userProfile/${username}`);
   };
 
@@ -40,12 +40,10 @@ const Post = ({ post }) => {
 
   return (
     <>
-      <div className="post flex flex-col w-full flex-shrink-0" onClick={handlePostClick}>
+      <div className="post flex flex-col w-full flex-shrink-0 hover:bg-gray-200 p-3 transition duration-75 rounded-lg" onClick={handlePostClick}>
         <div className="top_bar flex items-center py-2">
           <div className="profile_picture h-12 aspect-square rounded-[6rem] p-[2px] bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 overflow-hidden">
-            <button
-              onClick={(e) => navigateUser(post.creator.username, e)}
-            >
+            <button onClick={(e) => navigateUser(post.creator.username, e)}>
               <img
                 src={post.creator.avatar}
                 className="h-full aspect-square object-cover rounded-full border-white border-2"
@@ -64,10 +62,9 @@ const Post = ({ post }) => {
               <img src="media/icons/music.svg" className="h-3 mr-1 mt-1" alt="" />- {post.audioName}
             </p>
           </div>
-          <div className="more ml-auto p-2">
-            <button className="h-6 p-1 hover:bg-gray-200 rounded-lg flex justify-center items-center">
-              <img src="media/icons/dots.svg" className="h-6" alt="" />
-            </button>
+          {/* Display time ago */}
+          <div className="timeago ml-auto p-2 text-sm text-gray-500">
+            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
           </div>
         </div>
         <div className="media w-full h-auto rounded-lg shadow-lg">
@@ -90,14 +87,12 @@ const Post = ({ post }) => {
             </button>
             <p className="text-sm -mt-1">{likesCount}</p>
           </div>
-
           <div className="comments flex flex-col items-center justify-center" onClick={handlePostClick}>
             <button>
               <img src="/media/icons/comment.svg" className="h-9 -mt-1 mx-1" alt="Comment" />
             </button>
             <p className="text-sm -mt-1">{post.commentsCount}</p>
           </div>
-
           <div className="share flex flex-col items-center justify-center">
             <button>
               <img src="/media/icons/share.svg" className="h-7 mx-1" alt="Share" />
@@ -109,7 +104,6 @@ const Post = ({ post }) => {
         <div className="line bg-gray-300 w-full h-[2px] rounded-lg my-4"></div>
       </div>
 
-      {/* DedicatedPost Popup */}
       {showDedicatedPost && (
         <DedicatedPost
           post={post}

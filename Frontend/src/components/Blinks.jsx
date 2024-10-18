@@ -1,7 +1,7 @@
 function Blinks(){
     return (
         <>
-        <p>Blinks</p>
+        <p className="m-auto text-gray-500 text-xl">Coming Soon</p>
         </>
     )
 }

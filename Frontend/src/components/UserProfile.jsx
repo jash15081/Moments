@@ -126,7 +126,7 @@ function UserProfile(){
             </div>
             <div className="mutuals name_and_follow flex bg-gray-100  pl-14 pt-2 text-gray-600 text-sm pb-4">
                 {user.user.bio == ""?<p className="text-gray-900 font-semibold mr-2">Bio :</p>:<></>}
-                <div className="bio">{user.user.bio}</div>
+                <div className="bio" style={{ whiteSpace: "pre-wrap" }}>{user.user.bio}</div>
             </div>
             {user.following||(user.user.isPrivate == false)?<Posts userId={user.user._id} />:
             <><div className="flex items-center justify-center h-[60%] text-gray-500">User is Private</div></>}   

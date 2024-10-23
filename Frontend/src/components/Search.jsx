@@ -14,17 +14,19 @@ function Search() {
 
   const fetchUser = useCallback(
     debounce(async (searchStr) => {
-      if (searchStr.trim() === "") {
-        setUsers([]);
-        setIsLoading(false);
-        return;
-      }
+      // if (searchStr.trim() === "") {
+      //   setUsers([]);
+      //   setIsLoading(false);
+      //   return;
+      // }
       setIsLoading(true);
       try {
         const fetchedUsers = await axiosInstance.post("/users/search", { str: searchStr });
         setIsLoading(false);
+        console.log(fetchedUsers.data.data)
         setUsers(fetchedUsers.data.data);
       } catch (e) {
+        console.log(e)
         setIsLoading(false);
         setError(e.response?.data?.message);
       }
@@ -46,7 +48,8 @@ function Search() {
   };
 
   useEffect(() => {
-    fetchMutualAccounts(); // Fetch mutual accounts on mount
+    setIsLoading(true);
+    fetchUser(str);
   }, []);
 
   useEffect(() => {

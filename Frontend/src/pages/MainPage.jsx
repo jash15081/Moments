@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
+import { useAuth } from "../utils/authContext";
 
 function MainPage() {
+    const {setIsLoggedIn} = useAuth();
   const navigate = useNavigate();
   const logout = async()=>{
     try{
       const res = axiosInstance.post("/users/logout");
+      setIsLoggedIn(false);
       navigate("/login");
     }
     catch(e){
@@ -151,7 +154,7 @@ function MainPage() {
             />
           </NavLink>
         </div>
-          
+        
           <Outlet />
         
 

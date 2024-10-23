@@ -193,10 +193,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 const searchUsers = asyncHandler(async (req,res)=>{
-    console.log("reqcomes")
     const {str} = req.body;
-    if(!str){
-        return res.status(201).json(new ApiResponse(201,[],"user fetched !"));
+    if(str==""){
+        const response = await User.find();
+        return res.status(201).json(new ApiResponse(201,response,"user fetched !"));
     }
     const users = await User.find({
         $or:[{username: { $regex: str, $options: 'i' }},{fullname: { $regex: str, $options: 'i' }}]
@@ -299,30 +299,25 @@ const deleteRequest = asyncHandler(async(req,res)=>{
     res.status(200).json(new ApiResponse(200,{user,pending,following,followers,followings,posts},"pulled the request."));
 })
 const acceptRequest = asyncHandler(async(req,res)=>{
-    console.log("accepting")
     const {userId} = req.body;
     console.log(req.body)
 
     if(!userId){
         throw new ApiError(400,"User Id Required !");
     }
-    console.log("hello")
 
     const currentId = req.user._id;
-    console.log("hello")
 
     const user = await User.findByIdAndUpdate(currentId,{$pull:{pendingRequests:userId}}).select("-refreshToken -password");
     console.log("hello")
     if(!user){
         throw new ApiError(401,"Something went wrong while updating user")
     }
-    console.log("hello")
 
     const follow = await Follows.create({
         followedTo:currentId,
         followedBy:userId
     })
-    console.log("accepting ?")
 
     if(!follow){
         throw new ApiError(501,"Something went wrong while Updating the followes !");

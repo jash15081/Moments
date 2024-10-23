@@ -42,9 +42,9 @@ function Notifications() {
     };
 
     return (
-        <div className="w-4/5 mx-auto flex flex-col overflow-y-auto">
+        <div className="w-4/5 mx-auto flex flex-col">
             {/* Follow Requests Dropdown */}
-            <div className="mb-4 overflow-y-auto">
+            <div className="mb-4">
                 <h3 
                     className="text-lg font-semibold bg-gray-100 pl-6 pt-4 mt-4 rounded-lg flex justify-between items-center cursor-pointer"
                     onClick={() => setIsFollowRequestsOpen(!isFollowRequestsOpen)}
@@ -53,7 +53,7 @@ function Notifications() {
                     {isFollowRequestsOpen ? <AiOutlineUp /> : <AiOutlineDown />}
                 </h3>
                 {isFollowRequestsOpen && (
-                    <div className="bg-gray-100 rounded-lg p-5 h-80 overflow-y-scroll">
+                    <div className="bg-gray-100 rounded-lg p-5 max-h-60 overflow-y-scroll"> {/* Set max height for scroll */}
                         {followRequests.length === 0 ? (
                             <p className="text-gray-600">No follow requests.</p>
                         ) : (
@@ -102,7 +102,7 @@ function Notifications() {
                     {isOtherNotificationsOpen ? <AiOutlineUp /> : <AiOutlineDown />}
                 </h3>
                 {isOtherNotificationsOpen && (
-                    <div className="bg-gray-100 rounded-lg p-5 overflow-y-auto">
+                    <div className="bg-gray-100 rounded-lg p-5 max-h-60 overflow-y-scroll"> {/* Set max height for scroll */}
                         {otherNotifications.length === 0 ? (
                             <p className="text-gray-600">No notifications.</p>
                         ) : (
@@ -112,7 +112,7 @@ function Notifications() {
                                     <div className="flex-1">
                                         <p className="font-medium">{notification.name}</p>
                                         <p className="text-gray-600 text-sm">{notification.message}</p>
-                                        <p className="text-gray-400 text-xs">{formatDistanceToNow(new Date(notification.createdAt))} ago</p> {/* Added timestamp */}
+                                        <p className="text-gray-400 text-xs">{formatDistanceToNow(new Date(notification.createdAt))} ago</p>
                                     </div>
                                 </div>
                             ))

@@ -80,7 +80,7 @@ function UserProfile(){
         <>
         <div className="profile w-full overflow-scroll">
             <div className="header bg-gray-100 p-2 flex items-center w-full h-[25%] justify-evenly sm:pt-10">
-                <div className="self-story  ml-[-5%] p-[4px] flex-shrink-0 mx-2 h-[80%]  rounded-[80%] bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 aspect-square m-0 overflow-hidden sm:h-[100%]">
+                <div className="self-story  ml-[-5%] p-[4px] flex-shrink-0 mx-2 h-[80%]  rounded-[80%] bg-gray-400 aspect-square m-0 overflow-hidden sm:h-[100%]">
                     <button>
                         <img 
                             src={user.user.avatar} 
@@ -119,8 +119,9 @@ function UserProfile(){
                     </div>
                 </div>
                 <div className="buttons  mr-6">
-                    {followLoading?<button className="px-4 py-2 bg-blue-400 rounded-lg w-28 h-10 flex items-center justify-center"><HashLoader color={"#eeeeee"} loading={true} size={15} /></button>:user.pending?(<button className="px-4 py-2 bg-gray-300 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{cancelRequest(user.user._id)}}>requested</button>):
-                    (user.following?<button className="px-4 py-2 bg-gray-300 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{unFollow(user.user._id)}}>following</button>:
+                    {followLoading?<button className="px-4 py-2 bg-blue-400 rounded-lg w-28 h-10 flex items-center justify-center"><HashLoader color={"#eeeeee"} loading={true} size={15} /></button>:
+                    user.pending?(<button className="px-4 py-2 bg-gray-300 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{cancelRequest(user.user._id)}}>requested</button>)
+                    :(user.following?<button className="px-4 py-2 bg-gray-300 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{unFollow(user.user._id)}}>following</button>:
                     <button className="px-4 py-2 bg-blue-400 rounded-lg w-28 h-10 flex items-center justify-center" onClick={()=>{follow(user.user._id)}}>follow</button>)}
                 </div>
             </div>

@@ -12,14 +12,11 @@ import { User } from "../models/user.model.js";
 const createPost = asyncHandler(async(req,res)=>{
     const file = req.file?.path;
     const userId = req.user._id
-    console.log("here ?")
     if(!file){
         throw new ApiError(400,"File required !");
     }
     const {caption} = req.body;
-    if(!caption){
-        throw new ApiError(400,"caption required!");
-    }
+   
     const response = await uploadOnCloudinary(file);
     if(!response){
         throw new ApiError(500,"Something went wrong while upoading on cloudinary !!");
@@ -30,7 +27,7 @@ const createPost = asyncHandler(async(req,res)=>{
         createdBy:userId,
         media:url,
         mediaType:type,
-        caption:caption
+        caption:caption || "",
     })
     if(!post){
         throw new ApiError(500,"Something went wrong while creating the post !");
@@ -209,8 +206,6 @@ const getComments = asyncHandler(async(req,res)=>{
           }
         }
       ]);
-      
-    console.log(comments);
     res.status(200).json(new ApiResponse(200,comments,"comments fetched SuccessFully !"));
 
 })

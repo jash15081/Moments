@@ -46,7 +46,7 @@ const Home = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="home-container mx-auto w-full flex flex-col p-4 h-full mt-4 sm:w-[30rem] overflow-y-auto">
+    <div className="home-container mx-auto w-full flex flex-col p-4 h-full mt-4 sm:w-[35rem] overflow-y-auto">
       {/* Greeting */}
       <div className="greeting bg-blue-100 p-4 rounded-lg text-center mb-6">
         <h1 className="text-xl font-semibold text-blue-800">

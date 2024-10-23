@@ -75,7 +75,7 @@ function Profile() {
   return (
     <div className="profile w-full overflow-scroll">
       <div className="header bg-gray-100 p-2 flex items-center w-full h-[30%] justify-evenly sm:pt-10">
-        <div className="self-story ml-[-5%] p-[4px] flex-shrink-0 mx-2 h-[90%] rounded-full bg-gradient-to-t from-blue-900 via-blue-500 to-purple-600 aspect-square overflow-hidden sm:h-[100%]">
+        <div className="self-story ml-[-5%] p-[4px] flex-shrink-0 mx-2 h-[90%] rounded-full bg-gray-400 aspect-square overflow-hidden sm:h-[100%]">
           <img
             src={user.avatar}
             className="border-white border-2 h-full w-full rounded-full object-cover"

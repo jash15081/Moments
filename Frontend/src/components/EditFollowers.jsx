@@ -64,9 +64,9 @@ function EditFollowers() {
                   key={user.id}
                   className="flex items-center justify-between p-1 pl-3 bg-gray-100 hover:bg-gray-200 rounded-lg mb-[2px] transition-colors duration-200"
                 >
-                  <div className="flex items-center py-1">
+                  <div className="flex items-center py-1" onClick={() => userClick(user.username)}>
                     <div className="profile_picture h-9 aspect-square rounded-[6rem] p-[1px] bg-gray-50 overflow-hidden">
-                      <button onClick={() => userClick(user.username)}>
+                      <button >
                         <img
                           src={user.avatar}
                           className="h-full aspect-square object-cover rounded-full border-white border-2"

@@ -62,7 +62,7 @@ const EditProfile = ({ user, onCancel, onUpdate }) => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-3xl p-6 bg-white rounded-lg shadow-xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
         {/* Left Column - Form */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-auto">
           <h2 className="text-2xl font-semibold text-gray-700 text-center mb-6">Edit Profile</h2>
 
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}

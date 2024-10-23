@@ -87,7 +87,7 @@ const Post = ({ post }) => {
             </button>
             <p className="text-sm -mt-1">{likesCount}</p>
           </div>
-          <div className="comments flex flex-col items-center justify-center" onClick={handlePostClick}>
+          <div className="comments flex flex-col items-center justify-center" >
             <button>
               <img src="/media/icons/comment.svg" className="h-9 -mt-1 mx-1" alt="Comment" />
             </button>

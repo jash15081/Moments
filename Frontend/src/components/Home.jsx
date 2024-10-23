@@ -8,7 +8,6 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch current user information
   const fetchCurrentUser = async () => {
     try {
       const response = await axiosInstance.get('/users/current-user');
@@ -58,7 +57,7 @@ const Home = () => {
       {/* Posts Section */}
       <div className="posts-section flex flex-col gap-4">
         {posts.length === 0 ? (
-          <p className="text-gray-500 text-center mt-4">No posts to show</p>
+          <p className="text-gray-500 text-center mt-4">You don't follow anyone !</p>
         ) : (
           posts.map((post) => <Post key={post._id} post={post} />)
         )}

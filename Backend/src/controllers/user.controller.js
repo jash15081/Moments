@@ -522,5 +522,5 @@ export {
     getFollowers,
     getFollowings,
     removeFollower,
-    getNotifications
+    getNotifications,
 }

@@ -53,7 +53,7 @@ function Notifications() {
                     {isFollowRequestsOpen ? <AiOutlineUp /> : <AiOutlineDown />}
                 </h3>
                 {isFollowRequestsOpen && (
-                    <div className="bg-gray-100 rounded-lg p-5 max-h-60 overflow-y-scroll"> {/* Set max height for scroll */}
+                    <div className="bg-gray-100 rounded-lg p-5 max-h-80 overflow-y-scroll">
                         {followRequests.length === 0 ? (
                             <p className="text-gray-600">No follow requests.</p>
                         ) : (
@@ -95,14 +95,14 @@ function Notifications() {
             {/* Other Notifications Dropdown */}
             <div>
                 <h3 
-                    className="text-lg font-semibold mb-4 bg-gray-100 pl-6 pt-4 rounded-lg flex justify-between items-center cursor-pointer"
+                    className="text-lg font-semibold mb-4 bg-gray-100 pl-6 pt-4 rounded-lg flex justify-between items-center cursor-pointer "
                     onClick={() => setIsOtherNotificationsOpen(!isOtherNotificationsOpen)}
                 >
                     Other Notifications
                     {isOtherNotificationsOpen ? <AiOutlineUp /> : <AiOutlineDown />}
                 </h3>
                 {isOtherNotificationsOpen && (
-                    <div className="bg-gray-100 rounded-lg p-5 max-h-60 overflow-y-scroll"> {/* Set max height for scroll */}
+                    <div className="bg-gray-100 rounded-lg p-5 max-h-80 overflow-y-scroll"> {/* Set max height for scroll */}
                         {otherNotifications.length === 0 ? (
                             <p className="text-gray-600">No notifications.</p>
                         ) : (
